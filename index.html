@@ -313,7 +313,8 @@
             font-size: 14px;
             white-space: pre;
             overflow-x: auto;
-            tab-size: 4;
+            tab-size: 8;
+            -moz-tab-size: 8; /* Firefox */
         }
     </style>
 </head>
@@ -366,15 +367,15 @@
                     explanation: "Mixing tabs and spaces within the same indentation block triggers TabError in modern Python."
                 },
                 {
-                    question:
+                question:
                     "Choose the correct fixed version (consistent indentation):<br><br>" +
-                    "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n    print(\"Hello\")\n    print(\"World\")</pre>" +
-                    "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n\tprint(\"Hello\")\n    print(\"World\")</pre>" +
+                    "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n    print(\"Hello\")   # 4 spaces\n    print(\"World\")   # 4 spaces</pre>" +
+                    "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n\tprint(\"Hello\")   # tab\n    print(\"World\")   # 4 spaces</pre>" +
                     "<b>C)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\nprint(\"Hello\")\nprint(\"World\")</pre>" +
                     "<b>D)</b> None of the above",
-                    options: ["A", "B", "C", "D"],
-                    answer: "A",
-                    explanation: "Use the same indent (PEP 8: 4 spaces) for all lines within the block."
+                options: ["A", "B", "C", "D"],
+                answer: "A",
+                explanation: "Correct: <b>A</b> (exactly 4 spaces under <code>if True:</code>). Don't mix tabs/spaces. See <a href=\"https://peps.python.org/pep-0008/#indentation\" target=\"_blank\" rel=\"noopener noreferrer\">PEP 8 — Indentation</a>."
                 },
                 {
                     question:
