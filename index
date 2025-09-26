@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrabeshQuiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .quiz-container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            max-width: 700px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .question {
+            font-size: clamp(18px, 4vw, 22px);
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+        
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .options li {
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .options li:hover {
+            background-color: #f5f9ff;
+        }
+        
+        .options label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: clamp(16px, 3.5vw, 18px);
+        }
+        
+        .options input {
+            margin-right: 12px;
+            transform: scale(1.2);
+            min-width: 18px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .score {
+            font-size: clamp(20px, 5vw, 24px);
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .feedback-container {
+            margin-top: 25px;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 20px;
+        }
+        
+        .feedback-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feedback-question {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: clamp(16px, 3.5vw, 18px);
+        }
+        
+        .feedback-answer {
+            display: flex;
+            flex-direction: column;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .feedback-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .question-counter {
+            text-align: right;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        
+        .result-emoji {
+            font-size: clamp(30px, 8vw, 40px);
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .restart-btn {
+            display: block;
+            margin: 20px auto 0;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            max-width: 250px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: clamp(24px, 5vw, 32px);
+        }
+        
+        .quiz-description {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: clamp(14px, 3vw, 16px);
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .shuffle-info {
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .quiz-container {
+                padding: 20px 15px;
+                border-radius: 10px;
+            }
+            
+            .options li {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .feedback-item {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .feedback-answer {
+                padding: 8px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .quiz-container {
+                padding: 15px 10px;
+            }
+            
+            .options li {
+                padding: 8px;
+            }
+            
+            .feedback-item {
+                padding: 10px;
+            }
+            
+            .question-counter {
+                text-align: center;
+            }
+            
+            .feedback-answer {
+                flex-direction: column;
+            }
+            
+            .feedback-label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+        }
+        
+        /* Large screen adjustments */
+        @media (min-width: 1200px) {
+            .quiz-container {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 id="quiz-title">Quiz Title</h1>
+        <p id="quiz-description" class="quiz-description">Quiz Description</p>
+        <div class="shuffle-info">Practice is the path to excellence - every line of code moves you forward</div>
+        
+        <div class="question-counter">
+            Question <span id="current-question">1</span> of <span id="total-questions">0</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="progress" style="width: 0%"></div>
+        </div>
+        
+        <div id="quiz">
+            <!-- Quiz content will be injected here -->
+        </div>
+        <div class="btn-container">
+            <button id="next-btn" class="btn" disabled>Next Question</button>
+        </div>
+        <div id="result" class="score"></div>
+        <!-- Copyright footer -->
+        <div style="margin-top:12px; text-align:center; color:#95a5a6; font-size:12px; user-select:none;">
+        © <script>document.write(new Date().getFullYear());</script> Prabesh Luitel
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // QUIZ CONFIGURATION - EDIT THIS SECTION ONLY
+        // ============================================
+        const quizConfig = {
+            // Page title (shown in browser tab)
+            pageTitle: "Indention Quiz",
+            
+            // Quiz title (shown on the page)
+            quizTitle: "Python Indention",
+            
+            // Quiz description
+            quizDescription: "Test your knowledge of Python Indention<br><span style='font-style:italic'>(courtesy to Hicham Daher)</span>",
+
+            
+            // Quiz questions array
+            questions: [
+            // 1) Mixing Tabs and Spaces — identify error (OK: options are plain text)
+            {
+                question: "What error is raised by the following code (mixing tabs and spaces)?<br><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n    print(\"Hello\")   # 4 spaces\n\tprint(\"World\")   # tab</pre>",
+                options: ["IndentationError", "TabError", "SyntaxError", "No error"],
+                answer: "TabError",
+                explanation: "Mixing tabs and spaces within the same indentation block triggers TabError in modern Python."
+            },
+
+            // 2) Mixing Tabs and Spaces — choose the correct fixed version (use letter options)
+            {
+                question:
+                "Choose the correct fixed version (consistent indentation):<br><br>" +
+                "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n    print(\"Hello\")\n    print(\"World\")</pre>" +
+                "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n\tprint(\"Hello\")\n    print(\"World\")</pre>" +
+                "<b>C)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\nprint(\"Hello\")\nprint(\"World\")</pre>" +
+                "<b>D)</b> None of the above",
+                options: ["A", "B", "C", "D"],
+                answer: "A",
+                explanation: "Use the same indent (PEP 8: 4 spaces) for all lines within the block."
+            },
+
+            // 3) Misaligned Code Blocks — identify error (OK)
+            {
+                question:
+                "What error best matches this misaligned block?<br><br>" +
+                "<pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>for i in range(3):\n    print(i)\n     print(\"Looping\")  # too much indentation</pre>",
+                options: ["No error", "IndentationError", "TabError", "TypeError"],
+                answer: "IndentationError",
+                explanation: "Statements in the same block must align exactly; the second print has an extra leading space."
+            },
+
+            // 4) Misaligned Code Blocks — select the correct fix (letter options)
+            {
+                question:
+                "Select the correct fix for the misaligned block:<br><br>" +
+                "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>for i in range(3):\n    print(i)\n    print(\"Looping\")</pre>" +
+                "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>for i in range(3):\nprint(i)\nprint(\"Looping\")</pre>" +
+                "<b>C)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'> for i in range(3):\n    print(i)\n     print(\"Looping\")</pre>" +
+                "<b>D)</b> None of the above",
+                options: ["A", "B", "C", "D"],
+                answer: "A",
+                explanation: "Both statements inside the loop must be indented to the same level."
+            },
+
+            // 5) Unexpected Indent — identify error (OK)
+            {
+                question:
+                "What happens with this top-level unexpected indent?<br><br>" +
+                "<pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>    print(\"Hello\")  # Unexpected extra spaces at start</pre>",
+                options: ["No error", "TabError", "IndentationError", "RuntimeError"],
+                answer: "IndentationError",
+                explanation: "Top-level statements should start at column 0 unless they belong to a block."
+            },
+
+            // 6) Unexpected Indent — pick the correct fix (letter options)
+            {
+                question:
+                "Pick the correct fix for the unexpected top-level indent:<br><br>" +
+                "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>print(\"Hello\")</pre>" +
+                "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>    print(\"Hello\")</pre>" +
+                "<b>C)</b> Wrap in parentheses<br>" +
+                "<b>D)</b> Replace spaces with tabs",
+                options: ["A", "B", "C", "D"],
+                answer: "A",
+                explanation: "Remove the leading spaces so the statement is at the top level."
+            },
+
+            // 7) Missing Indentation After a Colon — identify error (OK)
+            {
+                question:
+                "What error will this raise (missing indent after colon)?<br><br>" +
+                "<pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\nprint(\"Yes\")  # not indented</pre>",
+                options: ["No error", "IndentationError", "TabError", "SyntaxError"],
+                answer: "IndentationError",
+                explanation: "A suite-introducing statement (ending with :) must be followed by an indented block."
+            },
+
+            // 8) Missing Indentation After a Colon — choose the correct fixed version (letters)
+            {
+                question:
+                "Choose the correct fixed version:<br><br>" +
+                "<b>A)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\n    print(\"Yes\")</pre>" +
+                "<b>B)</b><br><pre style='font-family: monospace; background:#f5f5f5; padding:10px; border-radius:6px; white-space:pre-wrap;'>if True:\nprint(\"Yes\")</pre>" +
+                "<b>C)</b> Remove the colon<br>" +
+                "<b>D)</b> Add a blank line after if",
+                options: ["A", "B", "C", "D"],
+                answer: "A",
+                explanation: "Indent the line after the colon so it belongs to the `if` block."
+            }
+            ]
+        };
+        // ============================================
+        // DO NOT EDIT
+        // ============================================
+
+        // Shuffle helper function
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Set page title
+        document.title = quizConfig.pageTitle;
+        
+        // Set quiz title and description
+        document.getElementById('quiz-title').textContent = quizConfig.quizTitle;
+        document.getElementById('quiz-description').innerHTML = quizConfig.quizDescription;
+
+        // Quiz variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // DOM elements
+        const quizContainer = document.getElementById('quiz');
+        const nextButton = document.getElementById('next-btn');
+        const resultContainer = document.getElementById('result');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressElement = document.getElementById('progress');
+
+        // Initialize total questions display
+        totalQuestionsElement.textContent = quizConfig.questions.length;
+
+        // Shuffle questions initially
+        shuffleArray(quizConfig.questions);
+
+        // Display the current question with shuffled options
+        function displayQuestion() {
+            const question = quizConfig.questions[currentQuestionIndex];
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Update progress bar
+            const progressPercentage = ((currentQuestionIndex + 1) / quizConfig.questions.length) * 100;
+            progressElement.style.width = `${progressPercentage}%`;
+
+            // Shuffle the options for this question
+            const shuffledOptions = shuffleArray([...question.options]);
+
+            quizContainer.innerHTML = `
+                <div class="question">${question.question}</div>
+                <ul class="options">
+                    ${shuffledOptions
+                        .map(
+                            (option, index) => `
+                                <li>
+                                    <label>
+                                        <input type="radio" name="option" value="${option}" />
+                                        ${option}
+                                    </label>
+                                </li>
+                            `
+                        )
+                        .join('')}
+                </ul>
+            `;
+
+            nextButton.disabled = true;
+            const options = document.querySelectorAll('input[name="option"]');
+            options.forEach(option => {
+                option.addEventListener('change', () => {
+                    nextButton.disabled = false;
+                });
+            });
+        }
+
+        // Show results with detailed feedback
+        function showResult() {
+            quizContainer.style.display = 'none';
+            nextButton.style.display = 'none';
+            
+            // Determine emoji based on score
+            let emoji = "😞";
+            let message = "Keep practicing to improve!";
+            
+            if (score === quizConfig.questions.length) {
+                emoji = "🏆";
+                message = "Congratulations! You are a Quiz Master!";
+            } else if (score >= quizConfig.questions.length / 2) {
+                emoji = "🎉";
+                message = "Well done! Keep it up!";
+            }
+            
+            resultContainer.innerHTML = `
+                <div class="result-emoji">${emoji}</div>
+                <div class="score">Your score: ${score}/${quizConfig.questions.length}</div>
+                <div style="text-align: center; margin-bottom: 20px; font-size: clamp(16px, 3.5vw, 18px);">${message}</div>
+                <div class="feedback-container">
+                    <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px; font-size: clamp(18px, 4vw, 22px);">Detailed Feedback</h2>
+                    ${userAnswers.map((item, index) => {
+                        const isCorrect = item.userAnswer === item.correctAnswer;
+                        return `
+                            <div class="feedback-item">
+                                <div class="feedback-question">${index + 1}. ${item.question}</div>
+                                <div class="feedback-answer ${isCorrect ? 'correct' : 'incorrect'}">
+                                    <span class="feedback-label">Your answer:</span> ${item.userAnswer || "Not answered"}
+                                </div>
+                                <div class="feedback-answer correct">
+                                    <span class="feedback-label">Correct answer:</span> ${item.correctAnswer}
+                                </div>
+                                <div style="margin-top: 10px; font-style: italic; color: #7f8c8d; font-size: clamp(14px, 3vw, 16px);"> Explanation: ${item.explanation}</div>
+
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="btn-container">
+                    <button id="restart-btn" class="btn restart-btn">Take Quiz Again</button>
+                </div>
+            `;
+            
+            // Add event listener for restart button
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        // Restart the quiz with new randomization
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = [];
+            
+            // Reshuffle questions for a new order
+            shuffleArray(quizConfig.questions);
+            
+            quizContainer.style.display = 'block';
+            nextButton.style.display = 'inline-block';
+            resultContainer.innerHTML = '';
+            displayQuestion();
+        }
+
+        // Next button event listener
+        nextButton.addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            const userAnswer = selectedOption ? selectedOption.value : null;
+            const correctAnswer = quizConfig.questions[currentQuestionIndex].answer;
+            const explanation = quizConfig.questions[currentQuestionIndex].explanation;
+            
+            // Store user's answer and correct answer
+            userAnswers.push({
+                question: quizConfig.questions[currentQuestionIndex].question,
+                userAnswer: userAnswer,
+                correctAnswer: correctAnswer,
+                explanation: explanation
+            });
+            
+            if (userAnswer === correctAnswer) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizConfig.questions.length) {
+                displayQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        // Initialize the quiz
+        displayQuestion();
+    </script>
+</body>
+</html>
