@@ -487,6 +487,16 @@
             // Shuffle the options for this question
             const shuffledOptions = shuffleArray([...question.options]);
 
+            // Keep "None/All of the above" last if present
+            const SPECIALS = ["None of the above", "All of the above", "None of the abouve", "None", "All"]; // typo included just in case
+            const idx = shuffledOptions.findIndex(
+            opt => SPECIALS.some(s => opt.trim().toLowerCase() === s.toLowerCase())
+            );
+            if (idx !== -1) {
+            const [special] = shuffledOptions.splice(idx, 1);
+            shuffledOptions.push(special);
+            }
+
             quizContainer.innerHTML = `
                 <div class="question">${question.question}</div>
                 <ul class="options">
